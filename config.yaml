@@ -1,0 +1,9 @@
+columns:        ['user',  'whiskey',  'rating']
+columns_types:  ['token', 'token',    'float']
+sep:            '\t'
+
+dir_Top_1000_Whiskey_Data:  '/opt/ml/workspace/src/Top_1000_Whiskey_Data.csv'
+dir_whiskey_dataset:        '/opt/ml/workspace/RecBole/dataset/whiskey'
+dir_inter:                  '/opt/ml/workspace/RecBole/dataset/whiskey/whiskey.inter'
+dir_Pop:                    '/opt/ml/workspace/RecBole/dataset/whiskey/Pop.csv'
+dir_model_saved:            '/opt/ml/workspace/RecBole/model_saved'
