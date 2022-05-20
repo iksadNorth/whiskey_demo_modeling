@@ -23,3 +23,7 @@ user_inter_num_interval: "[5,inf)"
 item_inter_num_interval: "[5,inf)"
 val_interval:
     rating: "[0,100]"
+
+# wandb
+log_wandb: False
+wandb_project: 'recbole_whiskey'

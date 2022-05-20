@@ -14,9 +14,10 @@ with open('config.yaml', 'r') as f:
 
 # %%
 class Collector():
-    def __init__(self, goods:list=[], poors:list=[], dataloader:UserDataLoader=None) -> None:
+    def __init__(self, goods:list=[], poors:list=[], user_id:str=None, dataloader:UserDataLoader=None) -> None:
         self.goods = goods
         self.poors = poors
+        self.user_id = user_id
         self.config, self.model, self.dataset, self.dataloader, _, _ = load_data_and_model(
             model_file=Path(CONFIG['dir_model_saved']) / CONFIG['file_model_used'],
         )
@@ -25,6 +26,12 @@ class Collector():
         )
         if dataloader:
             self.dataloader = dataloader
+    
+    def topk(self, k:int=10) -> list:
+        return self._popularity(k)
+    
+    def retrain(self) -> None:
+        raise NotImplementedError
     
     def _popularity(self, k:int=10) -> list:
         list_pop = []
@@ -41,8 +48,8 @@ class Collector():
             list_pop.append(whiskey)
         return list_pop
     
-    def _recbole(self, user:str, k:int=10) -> list:
-        uid_series = self._encode_user([user])
+    def _recbole(self, k:int=10) -> list:
+        uid_series = self._encode_user([self.user_id])
         
         topk_score, topk_iid_list = full_sort_topk(
             uid_series, self.model, 
@@ -51,7 +58,7 @@ class Collector():
         
         return self._decode(topk_iid_list.cpu())[0]
     
-    def _recvae_full_sort_predict(self) -> torch.Tensor:
+    def _recvae_predict(self) -> torch.Tensor:
         uid_series_good = self._encode(self.goods)
         uid_series_poor = self._encode(self.poors)
         
@@ -66,10 +73,12 @@ class Collector():
         return scores
     
     def _recvae_topk(self, k:int=10) -> tuple:
-        scores = self._recvae_full_sort_predict()
+        scores = self._recvae_predict()
         topk_scores, topk_index = torch.topk(scores, k)
         return self._decode(topk_index.cpu()).tolist()[0]
     
+    # ##########################
+    # 내부적으로만 사용되는 함수들
     def _make_rating_matrix(self, uid_series:np.ndarray) -> torch.Tensor:
         n_items = self.dataset.num(self.dataset.iid_field)
         device=self.config_vae['device']
@@ -83,12 +92,6 @@ class Collector():
         
         return rating_matrix
     
-    def topk(self, k:int=10) -> list:
-        return self._popularity(k)
-    
-    def retrain(self) -> None:
-        raise NotImplementedError
-    
     def _encode(self, item:list) -> np.ndarray:
         return self.dataset.token2id(self.dataset.iid_field, item)
     
@@ -101,8 +104,10 @@ class Collector():
 
 # %%
 if __name__ == '__main__':
-    agent = Collector()
-    list_pop = agent.topk(10)
-    print(list_pop)
+    agent = Collector(['glendronach-1972', 'ardbeg-1974', 'ardbeg-1975'], ['bowmore-1966-dt'])
+    list_pop = agent._popularity(10)
+    list_recvae = agent._recvae_topk(10)
+    print(f"list_pop : {list_pop}")
+    print(f"list_recvae : {list_recvae}")
 
 # %%
