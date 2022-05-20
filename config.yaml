@@ -7,3 +7,6 @@ dir_whiskey_dataset:        '/opt/ml/workspace/RecBole/dataset/whiskey'
 dir_inter:                  '/opt/ml/workspace/RecBole/dataset/whiskey/whiskey.inter'
 dir_Pop:                    '/opt/ml/workspace/RecBole/dataset/whiskey/Pop.csv'
 dir_model_saved:            '/opt/ml/workspace/RecBole/model_saved'
+
+file_model_used: 'RecVAE-May-17-2022_16-39-04.pth'
+file_model_vae_used: 'RecVAE-May-17-2022_16-39-04.pth'
