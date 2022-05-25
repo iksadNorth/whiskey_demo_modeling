@@ -184,7 +184,7 @@ class Greeter():
 
 # %%
 if __name__ == '__main__':
-    from IPython.display import Image, display
+    from IPython.display import display
     
     # 인스턴스 생성 시, 좋아하는 위스키 목록과 싫어하는 위스키 목록 전달.
     agent = Collector(['glendronach-1972', 'ardbeg-1974', 'ardbeg-1975'], ['bowmore-1966-dt'])
@@ -197,7 +197,7 @@ if __name__ == '__main__':
 
 # %%
 if __name__ == '__main__':
-    from IPython.display import Image, display
+    from IPython.display import display
     
     # 인스턴스 생성 및 사용자의 취향을 설정.
     agent = Greeter()
@@ -214,7 +214,7 @@ if __name__ == '__main__':
     display(result_df_cluster)
     
     # 원화 가격 기준으로 가격을 필터링한 DataFrame을 출력
-    result_filter_by_price = agent.filter_by_price(125000, 500000, result_df_cluster)
+    result_filter_by_price = agent.filter_by_price(result_df_cluster, 125000, 500000)
     display(result_filter_by_price)
     
     # 인기도 기준으로 정렬된 DataFrame을 출력
