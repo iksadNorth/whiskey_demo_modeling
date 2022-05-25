@@ -12,6 +12,13 @@ import yaml
 with open('config.yaml', 'r') as f:
     CONFIG = yaml.load(f)
 
+from sklearn.metrics.pairwise import cosine_similarity, cosine_distances
+from sklearn.preprocessing import MinMaxScaler
+
+from typing import Dict, List
+from collections import defaultdict
+
+
 # %%
 class Collector():
     def __init__(self, goods:list=[], poors:list=[], user_id:str=None, dataloader:UserDataLoader=None) -> None:
@@ -103,11 +110,117 @@ class Collector():
 
 
 # %%
+class Greeter():
+    def __init__(self) -> None:
+        self.df_whisky = pd.read_csv(CONFIG['dir_whiskey_w_tag'], index_col='Unnamed: 0')
+        self.cluster2taste = pd.read_csv(CONFIG['dir_whiskey_cluster'], index_col='Unnamed: 0')
+        self.minmaxscaler = MinMaxScaler()
+        self.dict_range_cost = {
+            "$":        (0,     30),
+            "$$":       (30,    50),
+            "$$$":      (50,    70),
+            "$$$$":     (70,    125),
+            "$$$$$":    (125,   300),
+            "$$$$$+":   (300,   np.inf),
+        }
+        self.list_cost = list(self.dict_range_cost.keys())
+    
+    def _cal_cos_sim(self, dict_taste:Dict[str, str], organized=False) -> np.ndarray:
+        _dict_taste = defaultdict(float)
+        _dict_taste.update(dict_taste)
+        col_taste = self.cluster2taste.columns
+        
+        list_taste = [_dict_taste[k] for k in col_taste]
+        list_taste = [list_taste]
+        
+        sim = cosine_distances(self.cluster2taste, list_taste)
+        
+        if organized:
+            self.minmaxscaler.fit(sim)
+            sim = self.minmaxscaler.transform(sim)
+    
+        return sim
+    
+    def find_cluster(self, dict_taste:Dict[str, str]) -> str:
+        array_cluster = self._cal_cos_sim(dict_taste)
+        idx_cluster = array_cluster.argmin()
+        
+        class_cluster = self.cluster2taste.index[idx_cluster]
+        condition_cluster = self.df_whisky.Cluster == class_cluster
+        df_cluster = self.df_whisky[condition_cluster]
+        
+        return self.cluster2taste.index[idx_cluster], df_cluster
+    
+    def filter_by_price(self, df_cluster, _price_min, _price_max):            
+        if _price_min > _price_max:
+            tmp = _price_min
+            _price_min = _price_max
+            _price_max = tmp
+        
+        idx_min = self._find_idx_range_cost(_price_min)
+        idx_max = self._find_idx_range_cost(_price_max)
+        
+        list_price_allowed = self.list_cost[idx_min:idx_max+1]
+        
+        condition = df_cluster.Cost.isin(list_price_allowed)
+        return df_cluster[condition]
+
+    def _find_idx_range_cost(self, val):
+        won_per_cad = CONFIG['won_per_cad']
+        val = val / won_per_cad
+        
+        for idx, (k, (v_min, v_max)) in enumerate(self.dict_range_cost.items()):
+            if v_min <= val < v_max:
+                return idx
+        raise IndexError
+    
+    def sort_by_popularity(self, df_cluster, topk=None):
+        sort_by = CONFIG['sort_by']
+        
+        if topk:
+            return df_cluster.sort_values(by=sort_by).iloc[:topk, :]
+        else:
+            return df_cluster.sort_values(by=sort_by)
+
+# %%
 if __name__ == '__main__':
+    from IPython.display import Image, display
+    
+    # 인스턴스 생성 시, 좋아하는 위스키 목록과 싫어하는 위스키 목록 전달.
     agent = Collector(['glendronach-1972', 'ardbeg-1974', 'ardbeg-1975'], ['bowmore-1966-dt'])
+    
+    # 해당 목록을 기준으로 '인기도 기반 추천 목록'과 'VAE 기반 알고리즘 추천 목록' 전달.
     list_pop = agent._popularity(10)
     list_recvae = agent._recvae_topk(10)
-    print(f"list_pop : {list_pop}")
-    print(f"list_recvae : {list_recvae}")
+    print(f"list_pop : \n{list_pop}")
+    print(f"list_recvae : \n{list_recvae}")
 
+# %%
+if __name__ == '__main__':
+    from IPython.display import Image, display
+    
+    # 인스턴스 생성 및 사용자의 취향을 설정.
+    agent = Greeter()
+    dict_taste = {'body':2, 'sweet':5, 'sherry':0}
+    
+    # 코사인 거리를 각 클러스터 별로 계산
+    result_orga = agent._cal_cos_sim(dict_taste, organized=True)
+    print(result_orga)
+    
+    # 가장 유사도가 높은 클러스터를 'A'와 같이 출력
+    # 해당 클러스터에 해당하는 DataFrame을 출력
+    result_cluster, result_df_cluster = agent.find_cluster(dict_taste)
+    print(result_cluster)
+    display(result_df_cluster)
+    
+    # 원화 가격 기준으로 가격을 필터링한 DataFrame을 출력
+    result_filter_by_price = agent.filter_by_price(125000, 500000, result_df_cluster)
+    display(result_filter_by_price)
+    
+    # 인기도 기준으로 정렬된 DataFrame을 출력
+    # topk를 설정한 경우 k개만 출력
+    result_sort_by_popularity = agent.sort_by_popularity(result_df_cluster, topk=10)
+    display(result_sort_by_popularity)
+    
+    
 # %%
