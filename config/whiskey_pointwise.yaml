@@ -6,4 +6,4 @@ valid_metric: AUC
 # defining Label
 LABEL_FIELD: rating
 threshold:
-    rating: 93.60
+    rating: 80.0

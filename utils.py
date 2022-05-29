@@ -18,6 +18,7 @@ from sklearn.preprocessing import MinMaxScaler
 from typing import Dict, List
 from collections import defaultdict
 
+from deprecated import deprecated
 
 # %%
 class Collector():
@@ -42,7 +43,8 @@ class Collector():
     
     def _popularity(self, k:int=10) -> list:
         list_pop = []
-        iterator = pd.read_csv(CONFIG['dir_Pop']).iterrows()
+        dir_Pop = Path(CONFIG['dir_dataset']) / CONFIG['name_dataset'] / f'Pop.csv'
+        iterator = pd.read_csv(dir_Pop).iterrows()
         
         for idx, row in iterator:
             whiskey = row['whiskey']
@@ -112,8 +114,9 @@ class Collector():
 # %%
 class Greeter():
     def __init__(self) -> None:
-        self.df_whisky = pd.read_csv(CONFIG['dir_whiskey_w_tag'], index_col='Unnamed: 0')
-        self.cluster2taste = pd.read_csv(CONFIG['dir_whiskey_cluster'], index_col='Unnamed: 0')
+        self.df_whisky = pd.read_csv(CONFIG['dir_integration'], sep=CONFIG['sep_source'])
+        self.cluster2taste = pd.read_csv(CONFIG['dir_whiskey_cluster'], sep=CONFIG['sep_source'])
+        self.cluster2taste = self.cluster2taste.set_index('Cluster')
         self.minmaxscaler = MinMaxScaler()
         self.dict_range_cost = {
             "$":        (0,     30),
@@ -149,9 +152,10 @@ class Greeter():
         condition_cluster = self.df_whisky.Cluster == class_cluster
         df_cluster = self.df_whisky[condition_cluster]
         
-        return self.cluster2taste.index[idx_cluster], df_cluster
+        return class_cluster, df_cluster
     
-    def filter_by_price(self, df_cluster, _price_min, _price_max):            
+    @deprecated(reason='데이터셋이 바뀜.')
+    def filter_by_price_class(self, df_cluster, _price_min, _price_max):            
         if _price_min > _price_max:
             tmp = _price_min
             _price_min = _price_max
@@ -163,6 +167,15 @@ class Greeter():
         list_price_allowed = self.list_cost[idx_min:idx_max+1]
         
         condition = df_cluster.Cost.isin(list_price_allowed)
+        return df_cluster[condition]
+    
+    def filter_by_price(self, df_cluster, _price_min, _price_max):            
+        if _price_min > _price_max:
+            tmp = _price_min
+            _price_min = _price_max
+            _price_max = tmp
+        
+        condition = (_price_min <= df_cluster.price) & (df_cluster.price < _price_max)
         return df_cluster[condition]
 
     def _find_idx_range_cost(self, val):
@@ -187,7 +200,7 @@ if __name__ == '__main__':
     from IPython.display import display
     
     # 인스턴스 생성 시, 좋아하는 위스키 목록과 싫어하는 위스키 목록 전달.
-    agent = Collector(['glendronach-1972', 'ardbeg-1974', 'ardbeg-1975'], ['bowmore-1966-dt'])
+    agent = Collector(['ledaig-1972', 'highland-park-freya', 'ardbeg-ten'], ['mcclellands-islay'])
     
     # 해당 목록을 기준으로 '인기도 기반 추천 목록'과 'VAE 기반 알고리즘 추천 목록' 전달.
     list_pop = agent._popularity(10)

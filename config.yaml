@@ -1,17 +1,33 @@
-columns:        ['user',  'whiskey',  'rating']
-columns_types:  ['token', 'token',    'float']
+columns_inter:        ['user',  'whiskey',  'rating']
+columns_inter_types:  ['token', 'token',    'float']
+
+columns_item:         ['whiskey', 'Meta Critic',  '#',      'Country',  'Type',   'price',  'body',   'sweet',  'sherry',   'malt',   'aperitif',   'smoky', 'pungent',   'fruity',   'honey',  'floral',   'spicy',  'medicinal',  'nutty',  'winey']
+columns_item_types:   ['token',   'float',        'float',  'token',    'token',  'float',  'float',  'float',  'float',    'float',  'float',      'float',  'float',    'float',    'float',  'float',    'float',  'float',      'float',  'float']
+
 sep:            '\t'
+sep_source:     '$'
 
-dir_whiskey_dataset:        '/opt/ml/workspace/RecBole/dataset/whiskey'
-dir_inter:                  '/opt/ml/workspace/RecBole/dataset/whiskey/whiskey.inter'
-dir_Pop:                    '/opt/ml/workspace/RecBole/dataset/whiskey/Pop.csv'
+col_user: 'user'
+col_item: 'whiskey'
+
+name_dataset:               'whiskey_with_taste'
+dir_dataset:                '/opt/ml/workspace/RecBole/dataset'
+
+dir_source_of_interaction:  '/opt/ml/workspace/src/src_processed/interaction.csv'
+dir_source_of_item:         '/opt/ml/workspace/src/src_processed/integration.csv'
+
 dir_model_saved:            '/opt/ml/workspace/RecBole/model_saved'
-dir_Top_1000_Whiskey_Data:  '/opt/ml/workspace/src/Top_1000_Whiskey_Data.csv'
-dir_whiskey_cluster:        '/opt/ml/workspace/src/whiskey_cluster.csv'
-dir_whiskey_w_tag:          '/opt/ml/workspace/src/whisky_w_tags.csv'
+dir_whiskey_cluster:        '/opt/ml/workspace/src/src_processed/whiskey_cluster.csv'
+dir_whiskey_w_tag:          '/opt/ml/workspace/src/src_processed/whisky_w_tags.csv'
+dir_integration:            '/opt/ml/workspace/src/src_processed/integration.csv'
 
-file_model_used:            'LightGCN-May-20-2022_05-21-45.pth'
-file_model_vae_used:        'RecVAE-May-20-2022_05-03-35.pth'
+# version.1
+# file_model_used:            'LightGCN-May-20-2022_05-21-45.pth'
+# file_model_vae_used:        'RecVAE-May-20-2022_05-03-35.pth'
+
+# version.2
+file_model_used:            'LightGCN-May-29-2022_11-40-52.pth'
+file_model_vae_used:        'RecVAE-May-29-2022_11-09-28.pth'
 
 won_per_cad: 984.52
 sort_by: ['Meta Critic', '#']

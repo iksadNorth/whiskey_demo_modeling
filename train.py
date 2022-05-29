@@ -2,12 +2,14 @@
 from recbole.quick_start import run_recbole
 
 from pathlib import Path
-from glob import glob
-from shutil import copytree, ignore_patterns
 
+import yaml
+with open('config.yaml', 'r') as f:
+    CONFIG = yaml.load(f)
 
 # %%
 dir_config = Path("/opt/ml/workspace/RecBole/config")
+name_dataset = CONFIG['name_dataset']
 
 config_dict = {
     'epochs': 300,
@@ -20,6 +22,7 @@ config_file_list = ['whiskey_pairwise.yaml', 'common.yaml']
 config_file_list = [dir_config / i for i in config_file_list]
 
 # %%
-run_recbole(dataset="whiskey", model="ConvNCF", config_file_list=config_file_list, config_dict=config_dict)
+# https://recbole.io/docs/user_guide/model_intro.html
+run_recbole(dataset=name_dataset, model="DeepFM", config_file_list=config_file_list, config_dict=config_dict)
 
 # %%
