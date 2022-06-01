@@ -2,8 +2,11 @@
 metrics: ['AUC', 'RMSE']
 valid_metric: AUC
 
-
 # defining Label
 LABEL_FIELD: rating
 threshold:
-    rating: 80.0
+    rating: 85.15
+
+eval_args:
+    group_by: 'user'
+    mode: 'labeled'

@@ -26,8 +26,8 @@ dir_integration:            '/opt/ml/workspace/src/src_processed/integration.csv
 # file_model_vae_used:        'RecVAE-May-20-2022_05-03-35.pth'
 
 # version.2
-file_model_used:            'LightGCN-May-29-2022_11-40-52.pth'
-file_model_vae_used:        'RecVAE-May-29-2022_11-09-28.pth'
+file_model_used:            'EASE-May-29-2022_15-27-38.pth'
+file_model_vae_used:        'RecVAE-May-31-2022_03-23-17.pth'
 
 won_per_cad: 984.52
 sort_by: ['Meta Critic', '#']

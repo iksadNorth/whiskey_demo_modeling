@@ -23,6 +23,6 @@ config_file_list = [dir_config / i for i in config_file_list]
 
 # %%
 # https://recbole.io/docs/user_guide/model_intro.html
-run_recbole(dataset=name_dataset, model="DeepFM", config_file_list=config_file_list, config_dict=config_dict)
+run_recbole(dataset=name_dataset, model="RecVAE", config_file_list=config_file_list, config_dict=config_dict)
 
 # %%

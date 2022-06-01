@@ -200,7 +200,7 @@ if __name__ == '__main__':
     from IPython.display import display
     
     # 인스턴스 생성 시, 좋아하는 위스키 목록과 싫어하는 위스키 목록 전달.
-    agent = Collector(['ledaig-1972', 'highland-park-freya', 'ardbeg-ten'], ['mcclellands-islay'])
+    agent = Collector(['ledaig-1972', 'highland-park-freya', 'ardbeg-ten'], ['benromach-2012'])
     
     # 해당 목록을 기준으로 '인기도 기반 추천 목록'과 'VAE 기반 알고리즘 추천 목록' 전달.
     list_pop = agent._popularity(10)
