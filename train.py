@@ -8,7 +8,7 @@ with open('config.yaml', 'r') as f:
     CONFIG = yaml.load(f)
 
 # %%
-dir_config = Path("/opt/ml/workspace/RecBole/config")
+dir_config = Path("/config")
 name_dataset = CONFIG['name_dataset']
 
 config_dict = {
@@ -23,6 +23,6 @@ config_file_list = [dir_config / i for i in config_file_list]
 
 # %%
 # https://recbole.io/docs/user_guide/model_intro.html
-run_recbole(dataset=name_dataset, model="DeepFM", config_file_list=config_file_list, config_dict=config_dict)
+run_recbole(dataset=name_dataset, model="EASE", config_file_list=config_file_list, config_dict=config_dict)
 
 # %%

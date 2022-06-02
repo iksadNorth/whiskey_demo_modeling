@@ -3,6 +3,9 @@
 /log/
 /log_tensorboard/
 
-/saved/
+/log_ver2/
+/log_tensorboard_ver2/
+
+/model_saved_ver2/
 /wandb/
 

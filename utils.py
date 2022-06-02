@@ -154,8 +154,7 @@ class Greeter():
         
         return class_cluster, df_cluster
     
-    @deprecated(reason='데이터셋이 바뀜.')
-    def filter_by_price_class(self, df_cluster, _price_min, _price_max):            
+    def filter_by_price(self, df_cluster, _price_min, _price_max):            
         if _price_min > _price_max:
             tmp = _price_min
             _price_min = _price_max
@@ -169,7 +168,8 @@ class Greeter():
         condition = df_cluster.Cost.isin(list_price_allowed)
         return df_cluster[condition]
     
-    def filter_by_price(self, df_cluster, _price_min, _price_max):            
+    @deprecated(reason='데이터셋이 바뀜.')
+    def filter_by_price_class(self, df_cluster, _price_min, _price_max):            
         if _price_min > _price_max:
             tmp = _price_min
             _price_min = _price_max
@@ -200,7 +200,7 @@ if __name__ == '__main__':
     from IPython.display import display
     
     # 인스턴스 생성 시, 좋아하는 위스키 목록과 싫어하는 위스키 목록 전달.
-    agent = Collector(['ledaig-1972', 'highland-park-freya', 'ardbeg-ten'], ['mcclellands-islay'])
+    agent = Collector(['Macallan 10yo Full Proof 57% 1980 (OB, Giovinetti & Figli)', "Jura 16yo Diurach's Own"], ['BenRiach Birnie Moss'])
     
     # 해당 목록을 기준으로 '인기도 기반 추천 목록'과 'VAE 기반 알고리즘 추천 목록' 전달.
     list_pop = agent._popularity(10)
